@@ -1,8 +1,7 @@
 ---
 - name: Install Google Chrome using Chocolatey via Nexus repo
-  hosts: windows
+  hosts: all
   gather_facts: no
-  become: yes
 
 
   vars:
