@@ -1,0 +1,35 @@
+---
+- name: Install Google Chrome using Chocolatey via Nexus repo
+  hosts: windows
+  gather_facts: no
+  become: yes
+  become_method: runas
+  become_user: Administrator
+
+  vars:
+    nexus_choco_repo_name: nexus-chocolatey
+    nexus_choco_repo_url: http://192.168.64.41:8081/repository/chocolatey-nuget-proxy/
+
+  tasks:
+
+    - name: Ensure Chocolatey is installed
+      win_chocolatey:
+        name: chocolatey
+        state: present
+
+    - name: Remove default Chocolatey community source
+      win_chocolatey_source:
+        name: chocolatey
+        state: absent
+
+    - name: Add Nexus Chocolatey repository
+      win_chocolatey_source:
+        name: "{{ nexus_choco_repo_name }}"
+        source: "{{ nexus_choco_repo_url }}"
+        state: present
+        priority: 1
+
+    - name: Install Google Chrome
+      win_chocolatey:
+        name: googlechrome
+        state: present
