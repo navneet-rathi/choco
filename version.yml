@@ -1,6 +1,6 @@
 ---
 - name: Get latest Google Chrome version from Chocolatey API
-  hosts: windows
+  hosts: localhost
   gather_facts: no
 
   tasks:
