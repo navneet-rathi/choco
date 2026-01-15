@@ -13,7 +13,7 @@
 
     - name: Extract Chrome version from API response
       ansible.builtin.set_fact:
-        chrome_latest_version: "{{ choco_response.content | regex_search('<d:Version>([^<]+)</d:Version>', '\\1') }}"
+        chrome_latest_version: "{{ choco_response.content | regex_search('<$skiptoken=([^<]+)', '\\1') }}"
 
     - name: Display latest Chrome version
       debug:
