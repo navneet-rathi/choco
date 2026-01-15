@@ -31,3 +31,4 @@
       win_chocolatey:
         name: googlechrome
         state: present
+        ignore_checksums: true
