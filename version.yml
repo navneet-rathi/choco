@@ -1,25 +1,21 @@
 ---
 - name: Get latest Google Chrome version from Chocolatey API
-  hosts: all
-  gather_facts: false
+  hosts: windows
+  gather_facts: no
 
   tasks:
-    - name: Query Chocolatey API for Google Chrome package details
-      ansible.builtin.uri:
-        url: "community.chocolatey.org(Id='googlechrome', Version='')"
+    - name: Query Chocolatey API for latest Chrome version
+      ansible.windows.win_uri:
+        url: "https://community.chocolatey.org/api/v2/Packages()?$filter=Id eq 'googlechrome'&$orderby=Version desc&$top=1"
         method: GET
-        return_content: true
-        body_format: json
-      register: choco_api_response
-      # The API call might return an error status even on success for OData requests, so ignore errors here
-      ignore_errors: true
+        return_content: yes
+      register: choco_response
 
-    - name: Extract the latest version using regex if API response is XML
+    - name: Extract Chrome version from API response
       ansible.builtin.set_fact:
-        latest_chrome_version: >-
-          {{ choco_api_response.content | regex_search('<d:Version>(.*?)<\/d:Version>', '\\1') | first if choco_api_response.content is search('<d:Version>') else 'Version not found' }}
-      # This task is only for when the API returns XML content (which can happen with the /api/v2/ endpoint)
+        chrome_latest_version: "{{ choco_response.content | regex_search('<d:Version>([^<]+)</d:Version>', '\\1') }}"
 
-    - name: Display the latest Chrome version
-      ansible.builtin.debug:
-        var: latest_chrome_version
+    - name: Display latest Chrome version
+      debug:
+        msg: "Latest Google Chrome version available via Chocolatey: {{ chrome_latest_version }}"
+
