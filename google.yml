@@ -7,7 +7,7 @@
     #nexus_choco_repo_url: http://192.168.64.41:8081/repository/chocolatey-nuget-proxy/
 
     chrome_msi_url: "https://dl.google.com/dl/chrome/install/extended/googlechromestandaloneenterprise_arm64.msi"
-    temp_path: "C:\\temp\\GoogleChromeARM64.msi"
+    temp_path: "/tmp/GoogleChromeARM64.msi"
     win_temp_path: "C:\\Temp\\chrome_arm64.msi"
   tasks:
     - name: get Current Google Chrome installation version
@@ -29,13 +29,13 @@
 
     - name: Ensure the C:\temp\example_directory directory exists
       ansible.windows.win_file:
-        path: "{{ temp_path | dirname }}"
+        path: "{{ win_temp_path | dirname }}"
         state: directory
 
     - name: copy from ansible to target machine
       ansible.windows.win_copy:
         src: "{{ temp_path }}"
-        dest: "{{ temp_path }}"
+        dest: "{{ win_temp_path }}"
 
     # - name: Install Google Chrome (Silent)
     #   ansible.windows.win_package:
