@@ -3,29 +3,43 @@
   hosts: all
   gather_facts: true
   vars:
-    nexus_choco_repo_name: nexus-chocolatey
-    nexus_choco_repo_url: http://192.168.64.41:8081/repository/chocolatey-nuget-proxy/
-  
+    #nexus_choco_repo_name: nexus-chocolatey
+    #nexus_choco_repo_url: http://192.168.64.41:8081/repository/chocolatey-nuget-proxy/
+
+    chrome_msi_url: "https://dl.google.com/dl/chrome/install/extended/googlechromestandaloneenterprise_arm64.msi"
+    temp_path: "C:\\temp\\GoogleChromeARM64.msi"
+    win_temp_path: "C:\\Temp\\chrome_arm64.msi"
   tasks:
-    - name: Ensure Chocolatey is installed
-      win_chocolatey:
-        name: chocolatey
+    - name: get Current Google Chrome installation version
+      ansible.windows.win_command: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --version'
+      ignore_errors: yes
+      register: chrome_version
+
+    - name: Display Current Google Chrome Version
+      ansible.builtin.debug:
+        msg: "Current Google Chrome Version: {{ chrome_version.stdout }}"
+      ignore_errors: yes
+
+    - name: Download Chrome ARM64 Offline Installer
+      ansible.windows.win_get_url:
+        url: "{{ chrome_msi_url }}"
+        dest: "{{ temp_path }}"
+        timeout: 60
+      delegate_to: localhost
+
+    - name: copy from ansible to target machine
+      ansible.windows.win_copy:
+        src: "{{ temp_path }}"
+        dest: "{{ temp_path }}"
+
+    - name: Install Google Chrome (Silent)
+      ansible.windows.win_package:
+        path: "{{ win_temp_path }}"
+        arguments: /qn /norestart
         state: present
 
-    - name: Remove default Chocolatey community source
-      win_chocolatey_source:
-        name: chocolatey
+    - name: Cleanup Installer
+      ansible.windows.win_file:
+        path: "{{ win_temp_path }}"
         state: absent
-
-    - name: Add Nexus Chocolatey repository
-      win_chocolatey_source:
-        name: "{{ nexus_choco_repo_name }}"
-        source: "{{ nexus_choco_repo_url }}"
-        state: present
-        priority: 1
-
-    - name: Install Google Chrome
-      win_chocolatey:
-        name: googlechrome
-        state: present
-        ignore_checksums: true
+      when: chrome_exe.stat.exists
