@@ -9,11 +9,12 @@
     chrome_msi_url: "https://dl.google.com/dl/chrome/install/extended/googlechromestandaloneenterprise_arm64.msi"
     temp_path: "/tmp/GoogleChromeARM64.msi"
     win_temp_path: "C:\\Temp\\chrome_arm64.msi"
+    Package_name: "Google Chrome"
   tasks:
     - name: get Current Google Chrome installation version
-      ansible.windows.win_command: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --version'
+      ansible.windows.win_command: "Get-Package | Where-Object { $_.Name -eq {{ Package_name }} } | Select-Object Name, Version"
       ignore_errors: yes
-      register: chrome_version
+      register: chrome_version_before
 
     - name: Display Current Google Chrome Version
       ansible.builtin.debug:
@@ -43,8 +44,13 @@
         arguments: /qn /norestart
         state: present
 
-    # - name: Cleanup Installer
-    #   ansible.windows.win_file:
-    #     path: "{{ win_temp_path }}"
-    #     state: absent
-    #   when: chrome_exe.stat.exists
+    - name: get Current Google Chrome installation version
+      ansible.windows.win_command: "Get-Package | Where-Object { $_.Name -eq {{ Package_name }} } | Select-Object Name, Version"
+      ignore_errors: yes
+      register: chrome_version_after
+
+    - name: Cleanup Installer
+      ansible.windows.win_file:
+        path: "{{ win_temp_path }}"
+        state: absent
+      when: chrome_exe.stat.exists
