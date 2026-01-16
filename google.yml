@@ -37,11 +37,11 @@
         src: "{{ temp_path }}"
         dest: "{{ win_temp_path }}"
 
-    # - name: Install Google Chrome (Silent)
-    #   ansible.windows.win_package:
-    #     path: "{{ win_temp_path }}"
-    #     arguments: /qn /norestart
-    #     state: present
+    - name: Install Google Chrome (Silent)
+      ansible.windows.win_package:
+        path: "{{ win_temp_path }}"
+        arguments: /qn /norestart
+        state: present
 
     # - name: Cleanup Installer
     #   ansible.windows.win_file:
