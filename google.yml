@@ -27,9 +27,9 @@
         timeout: 60
       delegate_to: localhost
 
-    - name: Ensure the C:\temp\example_directory directory exists
+    - name: Ensure the "{{ win_temp_path | ansible.builtin.win_dirname }}" directory exists
       ansible.windows.win_file:
-        path: "{{ win_temp_path | dirname }}"
+        path: "{{ win_temp_path | ansible.builtin.win_dirname }}"
         state: directory
 
     - name: copy from ansible to target machine
