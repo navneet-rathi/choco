@@ -21,7 +21,7 @@
       ignore_errors: yes
 
     - name: Download Chrome ARM64 Offline Installer
-      ansible.windows.win_get_url:
+      ansible.builtin.uri:
         url: "{{ chrome_msi_url }}"
         dest: "{{ temp_path }}"
         timeout: 60
