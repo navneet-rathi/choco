@@ -45,7 +45,7 @@
         state: present
 
     - name: get Current Google Chrome installation version
-      ansible.windows.win_shell: "Get-Package | Where-Object { $_.Name -eq {{ Package_name }} } | Select-Object Name, Version"
+      ansible.windows.win_shell: 'Get-Package | Where-Object { $_.Name -eq "{{ Package_name }}" } | Select-Object Name, Version'
       ignore_errors: yes
       register: chrome_version_after
 
