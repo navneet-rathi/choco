@@ -18,7 +18,7 @@
 
     - name: Display Current Google Chrome Version
       ansible.builtin.debug:
-        msg: "Current Google Chrome Version: {{ chrome_version.stdout }}"
+        msg: "Current Google Chrome Version: {{ chrome_version_before.stdout }}"
       ignore_errors: yes
 
     - name: Download Chrome ARM64 Offline Installer
