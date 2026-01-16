@@ -27,19 +27,24 @@
         timeout: 60
       delegate_to: localhost
 
+    - name: Ensure the C:\temp\example_directory directory exists
+      ansible.windows.win_file:
+        path: "{{ temp_path | dirname }}"
+        state: directory
+
     - name: copy from ansible to target machine
       ansible.windows.win_copy:
         src: "{{ temp_path }}"
         dest: "{{ temp_path }}"
 
-    - name: Install Google Chrome (Silent)
-      ansible.windows.win_package:
-        path: "{{ win_temp_path }}"
-        arguments: /qn /norestart
-        state: present
+    # - name: Install Google Chrome (Silent)
+    #   ansible.windows.win_package:
+    #     path: "{{ win_temp_path }}"
+    #     arguments: /qn /norestart
+    #     state: present
 
-    - name: Cleanup Installer
-      ansible.windows.win_file:
-        path: "{{ win_temp_path }}"
-        state: absent
-      when: chrome_exe.stat.exists
+    # - name: Cleanup Installer
+    #   ansible.windows.win_file:
+    #     path: "{{ win_temp_path }}"
+    #     state: absent
+    #   when: chrome_exe.stat.exists
