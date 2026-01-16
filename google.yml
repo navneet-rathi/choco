@@ -53,4 +53,4 @@
       ansible.windows.win_file:
         path: "{{ win_temp_path }}"
         state: absent
-      when: chrome_exe.stat.exists
+    
