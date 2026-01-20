@@ -1,0 +1,35 @@
+---
+- name: Install Google Chrome using Chocolatey via Nexus repo
+  hosts: all
+  gather_facts: true
+  vars:
+    #nexus_choco_repo_name: nexus-chocolatey
+    #nexus_choco_repo_url: http://192.168.64.41:8081/repository/chocolatey-nuget-proxy/
+
+    chrome_msi_url: "https://dl.google.com/dl/chrome/install/extended/googlechromestandaloneenterprise_arm64.msi"
+    temp_path: "/tmp/GoogleChromeARM64.msi"
+    win_temp_path: "C:\\Temp\\chrome_arm64.msi"
+    Package_name: "Google Chrome"
+  tasks:
+    # - name: get Current Google Chrome installation version
+    #   ansible.windows.win_shell: 'Get-Package | Where-Object { $_.Name -eq "{{ Package_name }}" } | Select-Object Name, Version'
+    #   ignore_errors: yes
+    #   register: chrome_version_before
+
+    # - name: Display Current Google Chrome Version
+    #   ansible.builtin.debug:
+    #     msg: "Current Google Chrome Version: {{ chrome_version_before.stdout_lines }}"
+    #   ignore_errors: yes
+
+    - name: Download Chrome ARM64 Offline Installer
+      ansible.builtin.uri:
+        url: "{{ chrome_msi_url }}"
+        dest: "{{ temp_path }}"
+        timeout: 60
+      delegate_to: localhost
+
+    - name: Ensure the Package is copied to target Directory
+      ansible.builtin.shell: |
+        "mv {{ temp_path }} /var/www/html/{{ temp_path | ansible.builtin.basename }}"
+    
+        
